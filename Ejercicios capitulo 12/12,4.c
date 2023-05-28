@@ -16,8 +16,10 @@ int main()
     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓
     */
 
-    int *puntarr;                              // puntero unidimensional
-    puntarr = (int *)malloc(10 * sizeof(int)); // Asignamos 10 espacios al puntero unidimensional
+
+    /*
+    int *puntarr;                              // puntero unidimensional.
+    puntarr = (int *)malloc(10 * sizeof(int)); // Asignamos 10 espacios al puntero unidimensional.
 
     for (int i = 0; i < 10; i++)
     {
@@ -29,7 +31,7 @@ int main()
     free(puntarr);
 
     return 0;
-
+    */
 
 
     /*
@@ -38,4 +40,22 @@ int main()
 
     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓
     */
+
+    int (*bipuntarr)[3];                              // Creamos un puntero para las filas.
+    bipuntarr = malloc(3 * sizeof(*bipuntarr));       // Asignamos 3 espacios al puntero de las filas.
+
+    for (int i = 0; i < 3; i++)
+    {   
+        for (int j = 0; j < 3; j++)
+        {
+            bipuntarr[i][j]=i+j;
+            printf(" %d ", bipuntarr[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    free(bipuntarr);
+
+    return 0;
 }
