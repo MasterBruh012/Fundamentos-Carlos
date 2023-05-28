@@ -16,12 +16,14 @@ int main()
     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓     ↓
     */
 
+    int arr[10];
     int *puntarr;                              // puntero unidimensional
     puntarr = (int *)malloc(10 * sizeof(int)); // Asignamos 10 espacios al puntero unidimensional
 
     for (int i = 0; i < 10; i++)
     {
         *(puntarr + i) = i + 1;
+        arr[i]=i;
 
         printf(" %d \n", puntarr[i]);
     }
