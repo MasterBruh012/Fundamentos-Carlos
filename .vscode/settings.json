@@ -37,6 +37,7 @@
   "C_Cpp_Runner.useAddressSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "files.associations": {
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "stdio.h": "c"
   }
 }

@@ -63,7 +63,6 @@ int main()
     return 0;
     */
 
-
     /*
     La segunda forma, creamos un solo punteor que manejará
     las filas y las columnas.
@@ -71,14 +70,14 @@ int main()
     */
 
     int *bipuntarr;                                 // Creamos un puntero.
-    bipuntarr = (int*) malloc(N * M * sizeof(int)); // Asignamos los espacios de las filas y las colimnas.
+    bipuntarr = (int *)malloc(N * M * sizeof(int)); // Asignamos los espacios de las filas y las colimnas.
 
     // Accedemos a los elementos utilizando arimética de punteros.
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
         {
-            *(bipuntarr + i * M + j) = i + j; //Asignamos valores a los elementos.
+            *(bipuntarr + i * M + j) = i + j;         // Asignamos valores a los elementos.
             printf(" %d ", *(bipuntarr + i * M + j)); // imprimimos los valores.
         }
 
