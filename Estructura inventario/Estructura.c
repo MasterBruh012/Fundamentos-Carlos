@@ -64,7 +64,7 @@ int main()
             break;
         case 4:
             // Mostrar todos los articulos y sus existencias.
-            showexistencia(cantidadExistencia, listaExistencia);
+            showExistencia(cantidadExistencia, listaExistencia);
             break;
         default:
             break;
@@ -72,7 +72,7 @@ int main()
 
     } while (seleccion != 0);
 
-    showexistencia(cantidadExistencia, listaExistencia);
+    showExistencia(cantidadExistencia, listaExistencia);
 
     return 0;
 }
@@ -111,7 +111,7 @@ int MostrarMenu(int cantidadalmacenes, int cantidadarticulos)
     return 0;
 }
 
-void capart(int cantidadarticulos, articulo *listadoarticulos)
+void capturarArticulos(int cantidadarticulos, articulo *listadoarticulos)
 {
     printf("Id_Art%cculo: ", 161);
     scanf("%d", &((listadoarticulos + cantidadarticulos)->idarticulo));
@@ -126,7 +126,7 @@ void capart(int cantidadarticulos, articulo *listadoarticulos)
     return;
 }
 
-void capturaralmacen(int cantidadalmacen, almacen *listadoalmacen)
+void capturarAlmacen(int cantidadalmacen, almacen *listadoalmacen)
 {
     printf("Id_Almac%cn: ", 130);
     scanf("%d", &((listadoalmacen + cantidadalmacen)->idalmacen));
@@ -138,7 +138,7 @@ void capturaralmacen(int cantidadalmacen, almacen *listadoalmacen)
     return;
 }
 
-void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoalmacenes, existencia *listadoexistencia, articulo *listadoarticulos)
+void capturarExistencia(int cantalmacenes, int cantexist, int cantarti, almacen *listadoalmacenes, existencia *listadoexistencia, articulo *listadoarticulos)
 {
     int idalma = 0, idart = 0;
 
@@ -156,7 +156,7 @@ void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoa
 
     do
     {
-        showalmacen(cantalmacenes, listadoalmacenes);
+        showAlmacen(cantalmacenes, listadoalmacenes);
         printf("\nEscoja un almacen: ");
         scanf("%d", &idalma);
         (listadoexistencia + cantexist)->idalmacen = idalma;
@@ -165,7 +165,7 @@ void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoa
 
     do
     {
-        showarticulos(cantarti, listadoarticulos);
+        showArticulos(cantarti, listadoarticulos);
         printf("\nEscoja un articulo: ");
         scanf("%d", &idart);
         (listadoexistencia + cantexist)->idarticulo = idart;
@@ -177,7 +177,7 @@ void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoa
     return;
 }
 
-void showalmacen(int cantalma, almacen *listadoalmacenes)
+void showAlmacen(int cantalma, almacen *listadoalmacenes)
 {
 
     printf("Id_Almacen \t\t Nombre_Almacen\n");
@@ -189,7 +189,7 @@ void showalmacen(int cantalma, almacen *listadoalmacenes)
     return;
 }
 
-void showarticulos(int cantarti, articulo *listadoarticulos)
+void showArticulos(int cantarti, articulo *listadoarticulos)
 {
 
     printf("\n\nId_Articulo \t\t Nombre_Articulo \t\t Precio_Articulo\n");
@@ -201,7 +201,7 @@ void showarticulos(int cantarti, articulo *listadoarticulos)
     return;
 }
 
-void showexistencia(int cantexist, existencia *listadoexistencia)
+void showExistencia(int cantexist, existencia *listadoexistencia)
 {
     if (cantexist == 0)
     {
