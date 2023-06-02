@@ -22,49 +22,49 @@ typedef struct
 } articulo;
 
 int MostrarMenu(int, int);
-void capart(int, articulo *);
-void captexist(int, int, int, almacen *, existencia *, articulo *);
-void capturaralmacen(int, almacen *);
-void showalmacen(int, almacen *);
-void showarticulos(int, articulo *);
-void showexistencia(int, existencia *);
+void capturarArticulos(int, articulo *);
+void capturarExistencia(int, int, int, almacen *, existencia *, articulo *);
+void capturarAlmacen(int, almacen *);
+void showAlmacen(int, almacen *);
+void showArticulos(int, articulo *);
+void showExistencia(int, existencia *);
 
 int main()
 {
 
-    int cantart = 0, cantexist = 0, cantidadalmacen = 0, seleccion;
-    articulo *listart = (articulo *)malloc(sizeof(articulo) * cantart);
-    almacen *listadoalmacen = (almacen *)malloc(sizeof(almacen) * cantidadalmacen);
-    existencia *listexist = (existencia *)malloc(sizeof(existencia) * cantexist);
+    int cantidadArticulos = 0, cantidadExistencia = 0, cantidadAlmacenes = 0, seleccion;
+    articulo *listaArticulos = (articulo *)malloc(sizeof(articulo) * cantidadArticulos);
+    almacen *listaAlmacen = (almacen *)malloc(sizeof(almacen) * cantidadAlmacenes);
+    existencia *listaExistencia = (existencia *)malloc(sizeof(existencia) * cantidadExistencia);
 
     do
     {
-        switch (seleccion = MostrarMenu(0, cantart))
+        switch (seleccion = MostrarMenu(cantidadAlmacenes, cantidadArticulos))
         {
         case 1:
             // Registrar un nuevo almacen.
-            cantidadalmacen++;
-            listadoalmacen = (almacen *)realloc(listadoalmacen, sizeof(almacen) * cantidadalmacen);
-            capturaralmacen(cantidadalmacen - 1, listadoalmacen);
+            cantidadAlmacenes++;
+            listaAlmacen = (almacen *)realloc(listaAlmacen, sizeof(almacen) * cantidadAlmacenes);
+            capturarAlmacen(cantidadAlmacenes - 1, listaAlmacen);
 
             break;
         case 2:
             // Registrar nuevo articulo.
-            cantart++;
-            listart = (articulo *)realloc(listart, sizeof(articulo) * cantart);
-            capart(cantart - 1, listart);
+            cantidadArticulos++;
+            listaArticulos = (articulo *)realloc(listaArticulos, sizeof(articulo) * cantidadArticulos);
+            capturarArticulos(cantidadArticulos - 1, listaArticulos);
 
             break;
         case 3:
             // Establecer nueva existencia.
-            cantexist++;
-            listexist = (existencia *)realloc(listexist, sizeof(existencia) * cantexist);
-            captexist(cantidadalmacen, cantexist - 1, cantart, listadoalmacen, listexist, listart);
+            cantidadExistencia++;
+            listaExistencia = (existencia *)realloc(listaExistencia, sizeof(existencia) * cantidadExistencia);
+            capturarExistencia(cantidadAlmacenes, cantidadExistencia - 1, cantidadArticulos, listaAlmacen, listaExistencia, listaArticulos);
 
             break;
         case 4:
-            // Mostrar uno o todos los articulos y sus existencias.
-            showexistencia(cantexist, listexist);
+            // Mostrar todos los articulos y sus existencias.
+            showexistencia(cantidadExistencia, listaExistencia);
             break;
         default:
             break;
@@ -72,7 +72,7 @@ int main()
 
     } while (seleccion != 0);
 
-    showexistencia(cantexist, listexist);
+    showexistencia(cantidadExistencia, listaExistencia);
 
     return 0;
 }
@@ -86,7 +86,7 @@ int MostrarMenu(int cantidadalmacenes, int cantidadarticulos)
     printf("\n\t\t1: Registrar un nuevo almac%cn", 130);
     printf("\n\t\t2: Registrar nuevo art%cculo", 161);
     printf("\n\t\t3: Establecer nueva existencia");
-    printf("\n\t\t4: Mostrar uno o todos los art%cculos y sus existencias", 161);
+    printf("\n\t\t4: Mostrar todos los art%cculos y sus existencias", 161);
     printf("\n\n\t\t0: Salir\n\n\t\tSeleccione: ");
 
     fflush(stdin);
@@ -111,29 +111,29 @@ int MostrarMenu(int cantidadalmacenes, int cantidadarticulos)
     return 0;
 }
 
-void capart(int indice, articulo *listadoarticulos)
+void capart(int cantidadarticulos, articulo *listadoarticulos)
 {
     printf("Id_Art%cculo: ", 161);
-    scanf("%d", &((listadoarticulos + indice)->idarticulo));
+    scanf("%d", &((listadoarticulos + cantidadarticulos)->idarticulo));
 
     printf("Nombre_Art%cculo: ", 161);
     fflush(stdin);
-    gets((listadoarticulos + indice)->nombre);
+    gets((listadoarticulos + cantidadarticulos)->nombre);
 
     printf("Precio: ");
-    scanf("%f", &((listadoarticulos + indice)->precio));
+    scanf("%f", &((listadoarticulos + cantidadarticulos)->precio));
 
     return;
 }
 
-void capturaralmacen(int indice, almacen *listadoalmacen)
+void capturaralmacen(int cantidadalmacen, almacen *listadoalmacen)
 {
     printf("Id_Almac%cn: ", 130);
-    scanf("%d", &((listadoalmacen + indice)->idalmacen));
+    scanf("%d", &((listadoalmacen + cantidadalmacen)->idalmacen));
 
     printf("Nombre_Almac%cn: ", 130);
     fflush(stdin);
-    gets((listadoalmacen + indice)->nombre);
+    gets((listadoalmacen + cantidadalmacen)->nombre);
 
     return;
 }
@@ -142,20 +142,20 @@ void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoa
 {
     int idalma = 0, idart = 0;
 
+    if (cantalmacenes == 0)
+    {
+        printf("No hay almacenes en existencia\n");
+        return;
+    }
+
+    else if (cantarti == 0)
+    {
+        printf("No hay articulos en existencia\n");
+        return;
+    }
+
     do
     {
-        if (cantalmacenes == 0)
-        {
-            printf("No hay almacenes en existencia\n");
-            break;
-        }
-
-        else if (cantarti == 0)
-        {
-            printf("No hay articulos en existencia\n");
-            break;
-        }
-
         showalmacen(cantalmacenes, listadoalmacenes);
         printf("\nEscoja un almacen: ");
         scanf("%d", &idalma);
@@ -165,7 +165,6 @@ void captexist(int cantalmacenes, int cantexist, int cantarti, almacen *listadoa
 
     do
     {
-
         showarticulos(cantarti, listadoarticulos);
         printf("\nEscoja un articulo: ");
         scanf("%d", &idart);
