@@ -102,6 +102,10 @@ int main()
         }
     } while (seleccion != 0);
 
+    fclose(rutaCarro);
+    fclose(rutaPasajeros);
+    fclose(rutaServicio);
+
     return 0;
 }
 
