@@ -11,35 +11,23 @@ typedef struct
 typedef struct
 {
     CALIFICACION calificacion;
-    struct NodoCalificacion *siguiente;
-    struct NodoCalificacion *anterior;
+    struct NODOCALIFICACION *siguiente;
+    struct NODOCALIFICACION *anterior;
 
 } NODOCALIFICACION;
 
 void insertarCalificacion(NODOCALIFICACION *, CALIFICACION);
-
-
 void leerCalificacion(FILE *, NODOCALIFICACION *);
-
-
 void guardarCalificaion(FILE *, NODOCALIFICACION *);
-
-
-void ingresarCalificaion(NODOCALIFICACION **);
-
+void ingresarCalificaion(NODOCALIFICACION *);
 
 int main()
 {
-    char rutaCalificaciones[] = "calificaciones.txt";
+    FILE *archivoCalificaion = fopen("calificaiones.txt", "w+b");
+    NODOCALIFICACION *NodoCalificaion = NULL;
 
-    NODOCALIFICACION *NodoCalificacion = NULL;
-
-    FILE *archivoCalificaion = fopen(rutaCalificaciones, "w+b");
-
-    ingresarCalificaion(&NodoCalificacion);
-    guardarCalificaion(archivoCalificaion,NodoCalificacion);
-
-    fclose(archivoCalificaion);
+    ingresarCalificaion(NodoCalificaion);
+    guardarCalificaion(archivoCalificaion, NodoCalificaion);
 
     return 0;
 }
@@ -80,7 +68,7 @@ void leerCalificaion(FILE *archivo, NODOCALIFICACION *nodoCalificaion)
     int tamano = ftell(archivo);
     fseek(archivo, 0, SEEK_SET);
 
-    while (ftell(archivo) < tamano) // reemplazando el feof().
+    while (ftell(archivo) < tamano)
     {
         fread(&CalificacionActual, sizeof(CALIFICACION), 1, archivo);
 
@@ -90,15 +78,17 @@ void leerCalificaion(FILE *archivo, NODOCALIFICACION *nodoCalificaion)
 
 void guardarCalificaion(FILE *archivoCalificaion, NODOCALIFICACION *nodocalificacion)
 {
+    CALIFICACION calificacionActal;
     NODOCALIFICACION *temp = nodocalificacion;
     while (temp != NULL)
     {
-        fwrite(&temp->calificacion, sizeof(CALIFICACION), 1, archivoCalificaion);
+        calificacionActal = temp->calificacion;
+        fwrite(&calificacionActal, sizeof(CALIFICACION), 1, archivoCalificaion);
         temp = temp->siguiente;
     }
 }
 
-void ingresarCalificaion(NODOCALIFICACION **NodoCalificaciones)
+void ingresarCalificaion(NODOCALIFICACION *NodoCalificaciones)
 {
     CALIFICACION calificacion;
     printf("Ingrese el ID de la actividad: ");
@@ -110,5 +100,5 @@ void ingresarCalificaion(NODOCALIFICACION **NodoCalificaciones)
     printf("Ingrese el estado inactivo (0 o 1): ");
     scanf("%hd", &calificacion.Inactivo);
 
-    insertarCalificacion(*NodoCalificaciones, calificacion);
+    insertarCalificacion(NodoCalificaciones, calificacion);
 }
