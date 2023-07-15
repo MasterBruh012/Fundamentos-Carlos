@@ -10,12 +10,15 @@ typedef struct Calificacion
     struct Calificacion *siguiente;
 } CALIFICACION;
 
-int mostrarMenuCALIFICACION();
-void capturarCalificaciones(CALIFICACION **listaCalificaciones);
-void mostrarCalificaciones(CALIFICACION *listaCalificaciones);
-void eliminarRegistroCalificacion(CALIFICACION **listaCalificaciones, int id);
-void guardarCalificacionEnArchivo(CALIFICACION *listaCalificaciones);
-void cargarCalificacionesDesdeArchivo(CALIFICACION **listaCalificaciones);
+int mostrarMenuCalificacion(CALIFICACION *);
+
+int menuCalificacion();
+
+void capturarCalificaciones(CALIFICACION **);
+void mostrarCalificaciones(CALIFICACION *);
+void guardarCalificacionEnArchivo(CALIFICACION *);
+void cargarCalificacionesDesdeArchivo(CALIFICACION **);
+void modificarCalificacion(CALIFICACION *);
 
 int main()
 {
@@ -44,32 +47,25 @@ int main()
 
             break;
         case 4:
-
+            mostrarMenuCalificacion(listaCalificaciones);
             break;
         case 5:
-                capturarCalificaciones(&listaCalificaciones);
+
             break;
         case 6:
 
             break;
         case 7:
-        
+
             break;
         case 8:
-            mostrarCalificaciones(listaCalificaciones);
+
             break;
         case 9:
-        
+
             break;
         }
     } while (seleccion != 0);
-
-
-
-
-    eliminarRegistroCalificacion(&listaCalificaciones, 1);
-    mostrarCalificaciones(listaCalificaciones);
-    guardarCalificacionEnArchivo(listaCalificaciones);
 
     return 0;
 }
@@ -119,43 +115,6 @@ void mostrarCalificaciones(CALIFICACION *listaCalificaciones)
         printf("ID: %d, Calificacion: %.2f, inactividad: %hd\n", calificacionActual->ID_Actividad, calificacionActual->Calificacion, calificacionActual->Inactivo);
         calificacionActual = calificacionActual->siguiente;
     }
-}
-
-void eliminarRegistroCalificacion(CALIFICACION **listaCalificaciones, int id)
-{
-    CALIFICACION *calificacionActual = *listaCalificaciones;
-    CALIFICACION *calificacionAnterior = NULL;
-
-    while (calificacionActual != NULL)
-    {
-        if (calificacionActual->ID_Actividad == id)
-        {
-            if (calificacionAnterior != NULL)
-            {
-                calificacionAnterior->siguiente = calificacionActual->siguiente;
-                if (calificacionActual->siguiente != NULL)
-                {
-                    calificacionActual->siguiente->anterior = calificacionAnterior;
-                }
-            }
-            else
-            {
-                *listaCalificaciones = calificacionActual->siguiente;
-                if (calificacionActual->siguiente != NULL)
-                {
-                    calificacionActual->siguiente->anterior = NULL;
-                }
-            }
-            free(calificacionActual);
-            printf("Registro de CALIFICACION eliminado.\n");
-            return;
-        }
-
-        calificacionAnterior = calificacionActual;
-        calificacionActual = calificacionActual->siguiente;
-    }
-
-    printf("No se encontró un CALIFICACION con el ID especificado.\n");
 }
 
 void guardarCalificacionEnArchivo(CALIFICACION *listaCalificaciones)
@@ -214,19 +173,119 @@ void cargarCalificacionesDesdeArchivo(CALIFICACION **listaCalificaciones)
     fclose(archivoCalificaciones);
 }
 
+void modificarCalificacion(CALIFICACION *listaCalificaciones)
+{
+    mostrarCalificaciones(listaCalificaciones);
+
+    int idBuscado;
+    printf("\nIngrese el ID de la calificación a modificar: ");
+    scanf("%d", &idBuscado);
+
+    CALIFICACION *calificacionActual = listaCalificaciones;
+    while (calificacionActual != NULL)
+    {
+        if (calificacionActual->ID_Actividad == idBuscado)
+        {
+            printf("Calificación encontrada.\n");
+            printf("Ingrese la nueva calificación: ");
+            scanf("%f", &(calificacionActual->Calificacion));
+
+            printf("La calificación se ha modificado exitosamente.\n");
+            return;
+        }
+
+        calificacionActual = calificacionActual->siguiente;
+    }
+
+    printf("No se encontró una calificación con el ID especificado.\n");
+}
+
+void estadoCalificacion(CALIFICACION *listaCalificaciones)
+{
+    mostrarCalificaciones(listaCalificaciones);
+
+    int idBuscado;
+    int estado;
+    printf("\nIngrese el ID de la calificación a modificar: ");
+    scanf("%d", &idBuscado);
+
+    CALIFICACION *calificacionActual = listaCalificaciones;
+    while (calificacionActual != NULL)
+    {
+        if (calificacionActual->ID_Actividad == idBuscado)
+        {
+            do
+            {
+            printf("\nIngrese el nuevo estado (0 Activo | 1 Inactivo): ");
+            scanf("%hd", &(calificacionActual->Inactivo));
+
+            if (calificacionActual->Inactivo != 0 && calificacionActual->Inactivo != 1)
+            {
+                printf("El número ingresado es invalido\n");
+            }
+
+            } while (calificacionActual->Inactivo != 0 && calificacionActual->Inactivo != 1);
+
+            printf("El estado de la calificación se ha modificado exitosamente.\n");
+            return;
+        }
+
+        calificacionActual = calificacionActual->siguiente;
+    }
+
+    printf("No se encontró una calificación con el ID especificado.\n");
+}
+
+int mostrarMenuCalificacion(CALIFICACION *listaCalificaciones)
+{
+    int seleccion;
+
+    do
+    {
+        seleccion = menuCalificacion();
+
+        switch (seleccion)
+        {
+        case 0:
+            break;
+        case 1:
+            capturarCalificaciones(&listaCalificaciones);
+            break;
+        case 2:
+            modificarCalificacion(listaCalificaciones);
+            break;
+        case 3:
+            estadoCalificacion(listaCalificaciones);
+            break;
+        case 4:
+            mostrarCalificaciones(listaCalificaciones);
+            break;
+        case 5:
+
+            break;
+
+        case 6:
+
+            break;
+
+        case 7:
+
+            break;
+        }
+
+    } while (seleccion != 0);
+
+    guardarCalificacionEnArchivo(listaCalificaciones);
+}
+
 int mostrarMenu()
 {
     int opcion;
 
-    printf("\n1: Capturar estudiante.\n");
-    printf("2: Capturar asignatura.\n");
-    printf("3: Capturar actividad.\n");
-    printf("4: Registrar estudiante a una asignatura.\n");
-    printf("5: Registrar una calificación.\n");
-    printf("6: Mostrar estudiantes.\n");
-    printf("7: Mostrar asignaturas.\n");
-    printf("8: Mostrar calificaciones.\n");
-    printf("9: Eliminar registro de estudiante.\n");
+    printf("\n1: Menu estudiante.\n");
+    printf("2: Menu asignatura.\n");
+    printf("3: Menu actividades.\n");
+    printf("4: Menu calificaciones.\n");
     printf("0: Salir.\n");
     printf("Seleccione una opcion: ");
     fflush(stdin);
@@ -235,19 +294,14 @@ int mostrarMenu()
     return opcion;
 }
 
-int menucalificacion()
+int menuCalificacion()
 {
     char opcion;
 
-    printf("\n1: Capturar actividad.\n");
-    printf("2: Modificar registro de actividad.\n");
-    printf("3: Eliminar registro de actividad.\n");
-    printf("4: Mostrar actividades.\n");
-    printf("3: Todos los pasajeros especificando una compañia telefonica.\n");
-    printf("4: Todos los pasajeros cuyo tiempo de viaje promedio esté en un rango.\n");
-    printf("5: Todos los pasajeros cuyo monto con el que pagó esté en un rango.\n");
-    printf("6: Todos los pasajeros cuyo monto del servicio esté en un rango.\n");
-    printf("7: Todos los pasajeros cuya fecha y hora de servicio esté en un rango.\n");
+    printf("\n1: Capturar calificacion.\n");
+    printf("2: Modificar registro de calificacion.\n");
+    printf("3: Modificar estado de la calificación.\n");
+    printf("4: Mostrar todas las calificaciones.\n");
     printf("\n0: Regresar.\n");
     printf("\nSeleccione: ");
     fflush(stdin);
