@@ -12,6 +12,7 @@ typedef struct Calificacion
 
 int mostrarMenuCalificacion(CALIFICACION *);
 
+int mostrarMenu();
 int menuCalificacion();
 
 void capturarCalificaciones(CALIFICACION **);
