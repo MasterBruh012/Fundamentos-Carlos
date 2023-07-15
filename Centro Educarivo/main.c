@@ -1,105 +1,275 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct
+typedef struct Calificacion
 {
     int ID_Actividad;
     float Calificacion;
     short Inactivo;
+    struct Calificacion *anterior;
+    struct Calificacion *siguiente;
 } CALIFICACION;
 
-typedef struct NODOCALIFICACION
-{
-    CALIFICACION calificacion;
-    struct NODOCALIFICACION *siguiente;
-    struct NODOCALIFICACION *anterior;
-} NODOCALIFICACION;
-
-void insertarCalificacion(NODOCALIFICACION **, CALIFICACION);
-void leerCalificacion(FILE *, NODOCALIFICACION *);
-void guardarCalificacion(FILE *, NODOCALIFICACION *);
-void ingresarCalificacion(NODOCALIFICACION **);
+int mostrarMenuCALIFICACION();
+void capturarCalificaciones(CALIFICACION **listaCalificaciones);
+void mostrarCalificaciones(CALIFICACION *listaCalificaciones);
+void eliminarRegistroCalificacion(CALIFICACION **listaCalificaciones, int id);
+void guardarCalificacionEnArchivo(CALIFICACION *listaCalificaciones);
+void cargarCalificacionesDesdeArchivo(CALIFICACION **listaCalificaciones);
 
 int main()
 {
-    char rutaCalificaciones[] = "calificaciones.txt";
+    CALIFICACION *listaCalificaciones = NULL;
 
-    NODOCALIFICACION *NodoCalificacion = NULL;
+    cargarCalificacionesDesdeArchivo(&listaCalificaciones);
 
-    FILE *archivoCalificacion = fopen(rutaCalificaciones, "w+b");
+    int seleccion;
 
-    ingresarCalificacion(&NodoCalificacion);
-    guardarCalificacion(archivoCalificacion, NodoCalificacion);
+    do
+    {
+        seleccion = mostrarMenu();
 
-    fclose(archivoCalificacion);
+        switch (seleccion)
+        {
+        case 0:
+            printf("Hasta luego!\n");
+            break;
+        case 1:
+
+            break;
+        case 2:
+
+            break;
+        case 3:
+
+            break;
+        case 4:
+
+            break;
+        case 5:
+                capturarCalificaciones(&listaCalificaciones);
+            break;
+        case 6:
+
+            break;
+        case 7:
+        
+            break;
+        case 8:
+            mostrarCalificaciones(listaCalificaciones);
+            break;
+        case 9:
+        
+            break;
+        }
+    } while (seleccion != 0);
+
+
+
+
+    eliminarRegistroCalificacion(&listaCalificaciones, 1);
+    mostrarCalificaciones(listaCalificaciones);
+    guardarCalificacionEnArchivo(listaCalificaciones);
 
     return 0;
 }
 
-NODOCALIFICACION *crearNodo(CALIFICACION calificacion)
+void capturarCalificaciones(CALIFICACION **listaCalificaciones)
 {
-    NODOCALIFICACION *nuevoNodo = (NODOCALIFICACION *)malloc(sizeof(NODOCALIFICACION));
-    nuevoNodo->calificacion = calificacion;
-    nuevoNodo->siguiente = NULL;
-    nuevoNodo->anterior = NULL;
-    return nuevoNodo;
-}
+    CALIFICACION *nuevoCalificacion = (CALIFICACION *)malloc(sizeof(CALIFICACION));
 
-void insertarCalificacion(NODOCALIFICACION **lista, CALIFICACION calificacion)
-{
-    NODOCALIFICACION *nuevoNodo = crearNodo(calificacion);
-    if (*lista == NULL)
+    printf("Digite el ID: ");
+    fflush(stdin);
+    scanf("%d", &(nuevoCalificacion->ID_Actividad));
+
+    printf("Digite la calificacion: ");
+    fflush(stdin);
+    scanf("%f", &(nuevoCalificacion->Calificacion));
+
+    printf("Digite la inactividad: ");
+    fflush(stdin);
+    scanf("%hd", &(nuevoCalificacion->Inactivo));
+
+    nuevoCalificacion->anterior = NULL;
+    nuevoCalificacion->siguiente = NULL;
+
+    if (*listaCalificaciones == NULL)
     {
-        *lista = nuevoNodo;
+        *listaCalificaciones = nuevoCalificacion;
     }
     else
     {
-        NODOCALIFICACION *temp = *lista;
-        while (temp->siguiente != NULL)
+        CALIFICACION *ultimoCALIFICACION = *listaCalificaciones;
+        while (ultimoCALIFICACION->siguiente != NULL)
         {
-            temp = temp->siguiente;
+            ultimoCALIFICACION = ultimoCALIFICACION->siguiente;
         }
-        temp->siguiente = nuevoNodo;
-        nuevoNodo->anterior = temp;
+        ultimoCALIFICACION->siguiente = nuevoCalificacion;
+        nuevoCalificacion->anterior = ultimoCALIFICACION;
     }
 }
 
-void leerCalificacion(FILE *archivo, NODOCALIFICACION *nodoCalificacion)
+void mostrarCalificaciones(CALIFICACION *listaCalificaciones)
 {
-    CALIFICACION CalificacionActual;
+    CALIFICACION *calificacionActual = listaCalificaciones;
 
-    fseek(archivo, 0, SEEK_END);
-    int tamano = ftell(archivo);
-    fseek(archivo, 0, SEEK_SET);
-
-    while (ftell(archivo) < tamano)
+    printf("Calificaciones:\n");
+    while (calificacionActual != NULL)
     {
-        fread(&CalificacionActual, sizeof(CALIFICACION), 1, archivo);
-        insertarCalificacion(&(*nodoCalificacion), CalificacionActual);
+        printf("ID: %d, Calificacion: %.2f, inactividad: %hd\n", calificacionActual->ID_Actividad, calificacionActual->Calificacion, calificacionActual->Inactivo);
+        calificacionActual = calificacionActual->siguiente;
     }
 }
 
-void guardarCalificacion(FILE *archivoCalificacion, NODOCALIFICACION *nodocalificacion)
+void eliminarRegistroCalificacion(CALIFICACION **listaCalificaciones, int id)
 {
-    NODOCALIFICACION *temp = nodocalificacion;
-    while (temp != NULL)
+    CALIFICACION *calificacionActual = *listaCalificaciones;
+    CALIFICACION *calificacionAnterior = NULL;
+
+    while (calificacionActual != NULL)
     {
-        fwrite(&temp->calificacion, sizeof(CALIFICACION), 1, archivoCalificacion);
-        temp = temp->siguiente;
+        if (calificacionActual->ID_Actividad == id)
+        {
+            if (calificacionAnterior != NULL)
+            {
+                calificacionAnterior->siguiente = calificacionActual->siguiente;
+                if (calificacionActual->siguiente != NULL)
+                {
+                    calificacionActual->siguiente->anterior = calificacionAnterior;
+                }
+            }
+            else
+            {
+                *listaCalificaciones = calificacionActual->siguiente;
+                if (calificacionActual->siguiente != NULL)
+                {
+                    calificacionActual->siguiente->anterior = NULL;
+                }
+            }
+            free(calificacionActual);
+            printf("Registro de CALIFICACION eliminado.\n");
+            return;
+        }
+
+        calificacionAnterior = calificacionActual;
+        calificacionActual = calificacionActual->siguiente;
     }
+
+    printf("No se encontró un CALIFICACION con el ID especificado.\n");
 }
 
-void ingresarCalificacion(NODOCALIFICACION **NodoCalificaciones)
+void guardarCalificacionEnArchivo(CALIFICACION *listaCalificaciones)
 {
-    CALIFICACION calificacion;
-    printf("Ingrese el ID de la actividad: ");
-    scanf("%d", &calificacion.ID_Actividad);
+    FILE *archivoCalificaciones = fopen("calificaiones.txt", "wb");
+    CALIFICACION *calificacionActual = listaCalificaciones;
 
-    printf("Ingrese la calificación: ");
-    scanf("%f", &calificacion.Calificacion);
+    while (calificacionActual != NULL)
+    {
+        fwrite(calificacionActual, sizeof(CALIFICACION), 1, archivoCalificaciones);
+        calificacionActual = calificacionActual->siguiente;
+    }
 
-    printf("Ingrese el estado inactivo (0 o 1): ");
-    scanf("%hd", &calificacion.Inactivo);
+    fclose(archivoCalificaciones);
+}
 
-    insertarCalificacion(&(*NodoCalificaciones), calificacion);
+void cargarCalificacionesDesdeArchivo(CALIFICACION **listaCalificaciones)
+{
+    FILE *archivoCalificaciones = fopen("calificaiones.txt", "rb");
+
+    if (archivoCalificaciones == NULL)
+    {
+        return;
+    }
+
+    CALIFICACION calificaion;
+    fread(&calificaion, sizeof(CALIFICACION), 1, archivoCalificaciones);
+
+    while (!feof(archivoCalificaciones))
+    {
+        CALIFICACION *nuevoCalificaion = (CALIFICACION *)malloc(sizeof(CALIFICACION));
+        nuevoCalificaion->ID_Actividad = calificaion.ID_Actividad;
+        nuevoCalificaion->Calificacion = calificaion.Calificacion;
+        nuevoCalificaion->Inactivo = calificaion.Inactivo;
+        nuevoCalificaion->anterior = NULL;
+        nuevoCalificaion->siguiente = NULL;
+
+        if (*listaCalificaciones == NULL)
+        {
+            *listaCalificaciones = nuevoCalificaion;
+        }
+        else
+        {
+            CALIFICACION *ultimaCalificaion = *listaCalificaciones;
+            while (ultimaCalificaion->siguiente != NULL)
+            {
+                ultimaCalificaion = ultimaCalificaion->siguiente;
+            }
+            ultimaCalificaion->siguiente = nuevoCalificaion;
+            nuevoCalificaion->anterior = ultimaCalificaion;
+        }
+
+        fread(&calificaion, sizeof(CALIFICACION), 1, archivoCalificaciones);
+    }
+
+    fclose(archivoCalificaciones);
+}
+
+int mostrarMenu()
+{
+    int opcion;
+
+    printf("\n1: Capturar estudiante.\n");
+    printf("2: Capturar asignatura.\n");
+    printf("3: Capturar actividad.\n");
+    printf("4: Registrar estudiante a una asignatura.\n");
+    printf("5: Registrar una calificación.\n");
+    printf("6: Mostrar estudiantes.\n");
+    printf("7: Mostrar asignaturas.\n");
+    printf("8: Mostrar calificaciones.\n");
+    printf("9: Eliminar registro de estudiante.\n");
+    printf("0: Salir.\n");
+    printf("Seleccione una opcion: ");
+    fflush(stdin);
+    scanf("%d", &opcion);
+
+    return opcion;
+}
+
+int menucalificacion()
+{
+    char opcion;
+
+    printf("\n1: Capturar actividad.\n");
+    printf("2: Modificar registro de actividad.\n");
+    printf("3: Eliminar registro de actividad.\n");
+    printf("4: Mostrar actividades.\n");
+    printf("3: Todos los pasajeros especificando una compañia telefonica.\n");
+    printf("4: Todos los pasajeros cuyo tiempo de viaje promedio esté en un rango.\n");
+    printf("5: Todos los pasajeros cuyo monto con el que pagó esté en un rango.\n");
+    printf("6: Todos los pasajeros cuyo monto del servicio esté en un rango.\n");
+    printf("7: Todos los pasajeros cuya fecha y hora de servicio esté en un rango.\n");
+    printf("\n0: Regresar.\n");
+    printf("\nSeleccione: ");
+    fflush(stdin);
+    opcion = getchar();
+
+    switch (opcion)
+    {
+    case '1':
+        return 1;
+    case '2':
+        return 2;
+    case '3':
+        return 3;
+    case '4':
+        return 4;
+    case '5':
+        return 5;
+    case '6':
+        return 6;
+    case '7':
+        return 7;
+    default:
+        return 0;
+    }
 }
