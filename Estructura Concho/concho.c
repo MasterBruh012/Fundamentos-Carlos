@@ -1,3 +1,17 @@
+/*
+    A la hora de ingresar una fecha.
+    Se deberá colocar un "/" entre dato numero
+
+    05 "/" 07 "/" 2023
+
+    Lo mismo con las horas.
+    Entre las horas se pondrá un ":"
+
+    12 ":" 15 ":" 55
+
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -102,9 +116,9 @@ int main()
         }
     } while (seleccion != 0);
 
-    fclose(rutaCarro);
-    fclose(rutaPasajeros);
-    fclose(rutaServicio);
+    fclose(archivoCarro);
+    fclose(archivoPasajeros);
+    fclose(archivoServicio);
 
     return 0;
 }
@@ -160,6 +174,8 @@ void capturarServicio(FILE *archivoPasajeros, FILE *archivoCarro, FILE *archivoS
     Pasajeros pasajeroActual;
     Carros carroActual;
 
+    int comprobar = 0;
+
     fseek(archivoPasajeros, 0, SEEK_END);
     int tamanoPasajero = ftell(archivoPasajeros);
     fseek(archivoPasajeros, 0, SEEK_SET);
@@ -186,13 +202,71 @@ void capturarServicio(FILE *archivoPasajeros, FILE *archivoCarro, FILE *archivoS
                carroActual.ficha, carroActual.proprietario);
     }
 
-    printf("Digite el ID del pasajero: ");
-    fflush(stdin);
-    scanf("%d", &servicio->idPasajero);
+    do
+    {
 
-    printf("Digite la ficha del carro: ");
-    fflush(stdin);
-    scanf("%d", &servicio->fichaCarro);
+        fseek(archivoPasajeros, 0, SEEK_SET);
+
+        printf("\nDigite el ID del pasajero: ");
+        fflush(stdin);
+        scanf("%d", &servicio->idPasajero);
+
+        while (ftell(archivoPasajeros) < tamanoPasajero)
+        {
+            fread(&pasajeroActual, sizeof(Pasajeros), 1, archivoPasajeros);
+            if (servicio->idPasajero == pasajeroActual.id)
+            {
+                comprobar = 1;
+                break;
+            }
+
+            else
+            {
+                comprobar = -1;
+            }
+        }
+
+        if (comprobar == -1)
+        {
+            printf("\nDebe digitar un id válido.\n");
+        }
+
+    } while (comprobar != 1);
+
+    comprobar = 0;
+
+    do
+    {
+
+        fseek(archivoCarro, 0, SEEK_SET);
+
+        printf("\nDigite la ficha del carro: ");
+        fflush(stdin);
+        scanf("%d", &servicio->fichaCarro);
+
+        while (ftell(archivoCarro) < tamanoCarro)
+        {
+            fread(&carroActual, sizeof(Carros), 1, archivoCarro);
+            if (servicio->fichaCarro == carroActual.ficha)
+            {
+                comprobar = 1;
+                break;
+            }
+
+            else
+            {
+                comprobar = -1;
+            }
+        }
+
+        if (comprobar == -1)
+        {
+            printf("\nDebe digitar una ficha válida.\n");
+        }
+
+    } while (comprobar != 1);
+
+    comprobar = 0;
 
     printf("Digite el monto pagado: ");
     fflush(stdin);
